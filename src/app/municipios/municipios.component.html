@@ -1,0 +1,150 @@
+<swal
+    #deleteSwal
+    title="¿Estas seguro que desea eliminar?"
+    text="los datos no se recuperaran"
+    type="warning"
+    [showCancelButton]="true"
+    [focusCancel]="true">
+</swal>
+
+<swal
+    #alertSwal
+    title=""
+    text=""
+    type="success">
+</swal>
+
+<div style="width: 100vw;">
+  <div class="row m-0">
+    <div class="col-md-8 mb-3 text-right offset-md-2">
+      <button class="btn btn-primary btn2" (click)="openModal(content, newMunicipioForm)" data-toggle="modal"
+              data-target="#modalUser">
+        Agregar
+      </button>
+    </div>
+
+    <div class="col-md-6  offset-md-3" *ngFor="let municipio of municipios">
+      <div class="card mt-4">
+        <h3 class="card-header bg-light ">Municipio: {{municipio.data.municipio }}</h3>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-12">
+                  <b>Clave: </b>{{municipio.data.clave}}
+                </div>
+                <div class="col-md-12">
+                  <b>Significado: </b>{{municipio.data.significado}}
+                </div>
+                <div class="col-md-12">
+                  <b>Cabecera: </b>{{municipio.data.cabecera}}
+                </div>
+                <div class="col-md-12">
+                  <b>Superficie: </b>{{municipio.data.superficie}}
+                </div>
+                <div class="col-md-12">
+                  <b>Altitud: </b>{{municipio.data.altitud}}
+                </div>
+                <div class="col-md-12">
+                  <b>Clima: </b>{{municipio.data.clima}}
+                </div>
+                <div class="col-md-12">
+                  <b>Latitud: </b>{{municipio.data.latitud}}
+                </div>
+                <div class="col-md-12">
+                  <b>Longitud: </b>{{municipio.data.longitud}}
+                </div>
+
+              </div>
+            </div>
+            <div class="col-md-3   ">
+              <button class="btn btn-block btn-primary   btn1"
+                      (click)="openModal(content, newMunicipioForm,municipio)"
+              >Editar
+              </button>
+            </div>
+            <div class="col-md-3 ">
+              <button class="btn btn-block btn-danger btn2"
+                      [swal]="deleteSwal"
+                      (confirm)="delete(municipio)"
+              >Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #content>
+
+
+<div class="grd">
+      <h1>Municipios</h1>
+
+      <form (ngSubmit)="upsert(newMunicipioForm.value)" [formGroup]="newMunicipioForm">
+
+        <input type="hidden" formControlName="id">
+        <div class="form-group">
+          <label for="clave">Clave IGECEM</label>
+          <input class="form-control" type="text" formControlName="clave" id="clave">
+        </div>
+
+        <div class="form-group">
+          <label for="municipio">Municipio</label>
+          <input class="form-control" type="text" formControlName="municipio" id="municipio">
+        </div>
+
+        <div class="form-group">
+          <label for="significado">Significado</label>
+          <input class="form-control" type="text" formControlName="significado" id="significado">
+        </div>
+
+        <div class="form-group">
+          <label for="cabecera">Cabecera</label>
+          <input class="form-control" type="text" formControlName="cabecera" id="cabecera">
+        </div>
+
+        <div class="form-group">
+          <label for="superficie">Superficie</label>
+          <input class="form-control" type="text" formControlName="superficie" id="superficie">
+        </div>
+
+        <div class="form-group">
+          <label for="altitud">Altitud</label>
+          <input class="form-control" type="text" formControlName="altitud" id="altitud">
+        </div>
+
+        <div class="form-group">
+          <label for="clima">Clima</label>
+          <!--cálido, semiárido, seco, templado, semifrio y frio)-->
+          <select class="form-control" formControlName="clima" id="clima">
+            <option value="Cálido">Cálido</option>
+            <option value="Semiárido">Semiárido</option>
+            <option value="Seco">Seco</option>
+            <option value="Templado">Templado</option>
+            <option value="Semifrio">Semifrio</option>
+            <option value="Frio">Frio</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="latitud">Latitud</label>
+          <input class="form-control" type="text" formControlName="latitud" id="latitud">
+        </div>
+
+        <div class="form-group">
+          <label for="longitud">Longitud</label>
+          <input class="form-control" type="text" formControlName="longitud" id="longitud">
+        </div>
+
+        <input type="button" class="btn btn-danger" value="Cancelar">
+        <button type="submit" class="btn btn-primary" [disabled]="!newMunicipioForm.valid">
+          Agregar
+        </button>
+
+      </form>
+
+    </div>
+
+</ng-template>
