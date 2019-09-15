@@ -13,18 +13,26 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AngularFireAuthModule} from '@angular/fire/auth';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatInputModule, MatSelectModule} from '@angular/material';
+import {AgmCoreModule} from '@agm/core';
+
+
 
 @NgModule({
   declarations: [
     MunicipiosComponent,
-    AppComponent
+    AppComponent,
   ],
   imports: [
     RouterModule.forRoot([
-      { path: '', redirectTo: 'municipios', pathMatch: 'full' },
-      { path: 'municipios', component: MunicipiosComponent}
+      {path: '', redirectTo: 'municipios', pathMatch: 'full'},
+      {path: 'municipios', component: MunicipiosComponent}
     ]),
+    MatButtonModule,
+    MatCheckboxModule,
+    BrowserAnimationsModule,
     FormsModule,
+    MatInputModule,
     ReactiveFormsModule,
     BrowserModule,
     NgbModule,
@@ -34,15 +42,20 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AppRoutingModule,
-    BrowserAnimationsModule,
     AngularFireAuthModule,
     ReactiveFormsModule,
     FormsModule,
     ReactiveFormsModule,
-    BrowserAnimationsModule,
-    SweetAlert2Module.forRoot()
+    SweetAlert2Module.forRoot(),
+    MatFormFieldModule,
+    MatSelectModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyAuYXawrzjug2cr4cJpHKqO26Bv9c8n4W8',
+      libraries: ['places']
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+export class PizzaPartyAppModule { }

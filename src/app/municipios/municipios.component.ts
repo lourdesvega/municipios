@@ -1,8 +1,11 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild,  ElementRef, NgZone} from '@angular/core';
 import {SwalComponent} from '@sweetalert2/ngx-sweetalert2';
 import {Form, FormControl, FormGroup, Validators} from '@angular/forms';
 import {FirestoreService} from '../services/firestore/firestore.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { MapsAPILoader, MouseEvent } from '@agm/core';
+
 
 @Component({
   selector: 'app-municipios',
@@ -16,15 +19,23 @@ export class MunicipiosComponent implements OnInit {
   public documentId = null;
   public currentStatus = 1;
   public newMunicipioForm;
-  // @ts-ignore
-  @ViewChild('exampleModal') private modal;
-  // @ts-ignore
-  @ViewChild('alertSwal') private alertSwal: SwalComponent;
-
-
-  constructor(private firestoreService: FirestoreService, private modalService: NgbModal) {
+  title: string = 'AGM project';
+  latitude: number;
+  longitude: number;
+  zoom: number;
+  address: string;
+  private geoCoder;
+  @ViewChild('exampleModal', {static: true}) private modal;
+  @ViewChild('search', {static: false}) private searchElementRef: ElementRef;
+  @ViewChild('alertSwal', {static: true}) private alertSwal: SwalComponent;
+  constructor(
+    private firestoreService: FirestoreService,
+    private modalService: NgbModal,
+    private mapsAPILoader: MapsAPILoader,
+    private ngZone: NgZone) {
 
     this.newMunicipioForm = new FormGroup({
+
       clave: new FormControl('', Validators.required),
       municipio: new FormControl('', Validators.required),
       significado: new FormControl('', Validators.required),
@@ -34,6 +45,7 @@ export class MunicipiosComponent implements OnInit {
       clima: new FormControl('', Validators.required),
       latitud: new FormControl('', Validators.required),
       longitud: new FormControl('', Validators.required),
+      zonas: new FormControl('', Validators.required),
       id: new FormControl('')
     });
   }
@@ -48,8 +60,66 @@ export class MunicipiosComponent implements OnInit {
         });
       });
     });
+
+    this.mapsAPILoader.load().then(() => {
+      this.setCurrentLocation();
+      // tslint:disable-next-line:new-parens
+      this.geoCoder = new google.maps.Geocoder;
+
+      const autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
+        types: ['address']
+      });
+      autocomplete.addListener('place_changed', () => {
+        this.ngZone.run(() => {
+          const place: google.maps.places.PlaceResult = autocomplete.getPlace();
+          if (place.geometry === undefined || place.geometry === null) {
+            return;
+          }
+
+          this.latitude = place.geometry.location.lat();
+          this.longitude = place.geometry.location.lng();
+          this.zoom = 12;
+        });
+      });
+    });
   }
 
+
+
+  markerDragEnd($event: MouseEvent) {
+    console.log($event);
+    this.latitude = $event.coords.lat;
+    this.longitude = $event.coords.lng;
+    this.getAddress(this.latitude, this.longitude);
+  }
+
+  getAddress(latitude, longitude) {
+    this.geoCoder.geocode({ location: { lat: latitude, lng: longitude } }, (results, status) => {
+      console.log(results);
+      console.log(status);
+      if (status === 'OK') {
+        if (results[0]) {
+          this.zoom = 12;
+          this.address = results[0].formatted_address;
+        } else {
+          window.alert('No results found');
+        }
+      } else {
+        window.alert('Geocoder failed due to: ' + status);
+      }
+
+    });
+  }
+  // Get Current Location Coordinates
+  private setCurrentLocation() {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.latitude = position.coords.latitude;
+        this.longitude = position.coords.longitude;
+        this.zoom = 15;
+      });
+    }
+  }
   public openModal(content, newMunicipioForm, municipio = null) {
     this.municipio = municipio;
     this.currentStatus = 1;
@@ -70,7 +140,8 @@ export class MunicipiosComponent implements OnInit {
         altitud: municipio.data.altitud,
         clima: municipio.data.clima,
         latitud: municipio.data.latitud,
-        longitud: municipio.data.longitud
+        longitud: municipio.data.longitud,
+        zonas: municipio.data.zonas,
       });
       this.currentStatus = 2;
     }
@@ -115,7 +186,8 @@ export class MunicipiosComponent implements OnInit {
       altitud: form.altitud,
       clima: form.clima,
       latitud: form.latitud,
-      longitud: form.longitud
+      longitud: form.longitud,
+      zonas: form.zonas
     };
     if (this.currentStatus === 1) {
       this.newMunicipio(data);
@@ -135,6 +207,7 @@ export class MunicipiosComponent implements OnInit {
       clima: '',
       latitud: '',
       longitud: '',
+      zonas: '',
       id: ''
     });
   }

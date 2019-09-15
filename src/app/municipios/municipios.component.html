@@ -1,3 +1,4 @@
+
 <swal
     #deleteSwal
     title="¿Estas seguro que desea eliminar?"
@@ -6,6 +7,8 @@
     [showCancelButton]="true"
     [focusCancel]="true">
 </swal>
+
+
 
 <swal
     #alertSwal
@@ -54,20 +57,24 @@
                 <div class="col-md-12">
                   <b>Longitud: </b>{{municipio.data.longitud}}
                 </div>
+                <div class="col-md-12">
+                  <b>Zonas: </b>{{municipio.data.zonas}}
+                </div>
 
               </div>
             </div>
-            <div class="col-md-3   ">
-              <button class="btn btn-block btn-primary   btn1"
+
+            <div class="col-md-3">
+              <button class="btn btn-block btn-primary btn1"
                       (click)="openModal(content, newMunicipioForm,municipio)"
               >Editar
               </button>
             </div>
-            <div class="col-md-3 ">
+            <div class="col-md-3">
               <button class="btn btn-block btn-danger btn2"
                       [swal]="deleteSwal"
-                      (confirm)="delete(municipio)"
-              >Eliminar
+                      (confirm)="delete(municipio)">
+                Eliminar
               </button>
             </div>
           </div>
@@ -79,70 +86,93 @@
 <ng-template #content>
 
 
-<div class="grd">
+<div class="col-md-10">
       <h1>Municipios</h1>
 
       <form (ngSubmit)="upsert(newMunicipioForm.value)" [formGroup]="newMunicipioForm">
 
         <input type="hidden" formControlName="id">
-        <div class="form-group">
-          <label for="clave">Clave IGECEM</label>
-          <input class="form-control" type="text" formControlName="clave" id="clave">
-        </div>
+<br/>
+
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Clave IGECEM" type="text" formControlName="clave" id="clave">
+        </mat-form-field>
+<br/>
+
+        <mat-form-field class="example-full-width">
+          <input matInput type="text" placeholder="Municipio" formControlName="municipio" id="municipio">
+        </mat-form-field>
+
+        <br/>
+
+        <mat-form-field class="example-full-width">
+          <input matInput type="text" placeholder="Significado" formControlName="significado" id="significado">
+        </mat-form-field>
+<br/>
+        <mat-form-field class="example-full-width">
+          <input matInput type="text" placeholder="Cabecera" formControlName="cabecera" id="cabecera">
+        </mat-form-field>
+        <br/>
+
+        <mat-form-field class="example-full-width">
+          <input matInput type="text" placeholder="Superficie" formControlName="superficie" id="superficie">
+        </mat-form-field>
+        <br/>
+
+        <mat-form-field class="example-full-width">
+          <input matInput type="text" placeholder="Altitud" formControlName="altitud" id="altitud">
+        </mat-form-field>
+        <br/>
+        <mat-form-field>
+          <mat-label>Clima</mat-label>
+          <mat-select formControlName="clima" id="clima">
+              <mat-option value="Cálido">Cálido</mat-option>
+              <mat-option value="Semiárido">Semiárido</mat-option>
+              <mat-option value="Seco">Seco</mat-option>
+              <mat-option value="Templado">Templado</mat-option>
+              <mat-option value="Semifrio">Semifrio</mat-option>
+              <mat-option value="Frio">Frio</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br/>
+
+        <mat-form-field>
+          <mat-label>Zonas</mat-label>
+          <mat-select formControlName="zonas" id="zonas" multiple>
+           <!-- inundación, deslave, zona sísmica, incendio forestal, zona volcánica, derrumbes)-->
+            <mat-option value="Inundación">Inundación</mat-option>
+            <mat-option value="Deslave">Deslave</mat-option>
+            <mat-option value="Zona sísmica">Zona sísmica</mat-option>
+            <mat-option value="Incendio forestal">Incendio forestal</mat-option>
+            <mat-option value="Zona volcánica">Zona volcánica</mat-option>
+            <mat-option value="Derrumbes">Derrumbes</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br/>
+
 
         <div class="form-group">
-          <label for="municipio">Municipio</label>
-          <input class="form-control" type="text" formControlName="municipio" id="municipio">
+          <label>Enter address</label>
+          <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="Search Nearest Location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search>
         </div>
 
+        <agm-map [latitude]="latitude" [longitude]="longitude" [zoom]="zoom">
+          <agm-marker [latitude]="latitude" [longitude]="longitude" [markerDraggable]="true"
+                      (dragEnd)="markerDragEnd($event)"></agm-marker>
+        </agm-map>
+
+        <h5>Address: {{address}}</h5>
+        <div>Latitude: {{latitude}}</div>
+        <div>Longitude: {{longitude}}</div>
+
+
+        <br/>
         <div class="form-group">
-          <label for="significado">Significado</label>
-          <input class="form-control" type="text" formControlName="significado" id="significado">
-        </div>
-
-        <div class="form-group">
-          <label for="cabecera">Cabecera</label>
-          <input class="form-control" type="text" formControlName="cabecera" id="cabecera">
-        </div>
-
-        <div class="form-group">
-          <label for="superficie">Superficie</label>
-          <input class="form-control" type="text" formControlName="superficie" id="superficie">
-        </div>
-
-        <div class="form-group">
-          <label for="altitud">Altitud</label>
-          <input class="form-control" type="text" formControlName="altitud" id="altitud">
-        </div>
-
-        <div class="form-group">
-          <label for="clima">Clima</label>
-          <!--cálido, semiárido, seco, templado, semifrio y frio)-->
-          <select class="form-control" formControlName="clima" id="clima">
-            <option value="Cálido">Cálido</option>
-            <option value="Semiárido">Semiárido</option>
-            <option value="Seco">Seco</option>
-            <option value="Templado">Templado</option>
-            <option value="Semifrio">Semifrio</option>
-            <option value="Frio">Frio</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="latitud">Latitud</label>
-          <input class="form-control" type="text" formControlName="latitud" id="latitud">
-        </div>
-
-        <div class="form-group">
-          <label for="longitud">Longitud</label>
-          <input class="form-control" type="text" formControlName="longitud" id="longitud">
-        </div>
-
         <input type="button" class="btn btn-danger" value="Cancelar">
         <button type="submit" class="btn btn-primary" [disabled]="!newMunicipioForm.valid">
           Agregar
         </button>
-
+        </div>
       </form>
 
     </div>

@@ -15,7 +15,7 @@ export class FirestoreService {
 
   public createMunicipio(data: {clave: string, municipio: string, significado: string, cabecera: string,
     superficie: string, altitud: string,
-    clima: string, latitud: string, longitud: string}) {
+    clima: string, latitud: string, longitud: string, zonas: string}) {
     return this.firestore.collection('municipio').add(data);
   }
   // Obtiene un gato
