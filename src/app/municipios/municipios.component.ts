@@ -19,7 +19,7 @@ export class MunicipiosComponent implements OnInit {
   public documentId = null;
   public currentStatus = 1;
   public newMunicipioForm;
-  title: string = 'AGM project';
+  title: 'AGM project';
   latitude: number;
   longitude: number;
   zoom: number;
@@ -143,6 +143,8 @@ export class MunicipiosComponent implements OnInit {
         longitud: municipio.data.longitud,
         zonas: municipio.data.zonas,
       });
+      this.latitude = municipio.data.latitud;
+      this.longitude = municipio.data.longitud;
       this.currentStatus = 2;
     }
   }
