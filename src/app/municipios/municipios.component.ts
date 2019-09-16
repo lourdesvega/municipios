@@ -43,8 +43,8 @@ export class MunicipiosComponent implements OnInit {
       superficie: new FormControl('', Validators.required),
       altitud: new FormControl('', Validators.required),
       clima: new FormControl('', Validators.required),
-      latitud: new FormControl('', Validators.required),
-      longitud: new FormControl('', Validators.required),
+      latitud: new FormControl(''),
+      longitud: new FormControl(''),
       zonas: new FormControl('', Validators.required),
       id: new FormControl('')
     });
@@ -185,8 +185,8 @@ export class MunicipiosComponent implements OnInit {
       superficie: form.superficie,
       altitud: form.altitud,
       clima: form.clima,
-      latitud: form.latitud,
-      longitud: form.longitud,
+      latitud: this.latitude,
+      longitud: this.longitude,
       zonas: form.zonas
     };
     if (this.currentStatus === 1) {
